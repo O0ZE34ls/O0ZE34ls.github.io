@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hangout BETA</title>
+  <title>Hangout BETA (No Games)</title>
   <style>
     :root {
       --bg: #0b0c10;
@@ -22,647 +22,482 @@
       height: 100vh;
       display: flex;
       overflow: hidden;
-      position: relative;
-    }
-    body::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 30% 70%, rgba(88,101,242,0.08) 0%, transparent 40%),
-                  radial-gradient(circle at 80% 30%, rgba(59,165,92,0.06) 0%, transparent 40%),
-                  radial-gradient(circle at 20% 90%, rgba(237,66,69,0.05) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -1;
     }
     #sidebar {
-      width: 240px;
+      width: 260px;
       background: var(--sidebar);
-      padding: 12px;
+      padding: 16px;
       border-right: 1px solid #0a0b0e;
       overflow-y: auto;
     }
-    #main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
+    #main { flex:1; display:flex; flex-direction:column; }
     #video-area {
-      flex: 1;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      flex:1;
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      gap:16px;
+      flex-wrap:wrap;
+      overflow:auto;
     }
     .video-tile {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      background: black;
-      position: relative;
-      transition: all 0.4s ease;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      background:#000;
+      position:relative;
+      transition:all 0.3s;
     }
-    #remote-tile {
-      width: 480px;
-      height: 360px;
-      max-width: 90%;
-      max-height: 70vh;
-    }
-    #local-tile {
-      position: absolute;
-      bottom: 100px;
-      right: 20px;
-      width: 180px;
-      height: 135px;
-      border: 3px solid var(--accent);
-      z-index: 20;
-    }
-    .side-by-side #remote-tile,
-    .side-by-side #local-tile {
-      position: static;
-      width: 45%;
-      height: 60vh;
-      max-width: 600px;
+    .main-video { width:520px; height:390px; max-width:90vw; max-height:65vh; }
+    .self-video {
+      position:absolute;
+      bottom:30px; right:30px;
+      width:200px; height:150px;
+      border:3px solid var(--accent);
+      z-index:20;
     }
     video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #000; /* Fallback in case video is black */
+      width:100%; height:100%;
+      object-fit:cover;
+      background:#000;
     }
     .avatar-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px);
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(6px);
     }
     .avatar-circle {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: white;
-      font-size: 5.5rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: uppercase;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.6);
-    }
-    #local-tile .avatar-circle {
-      width: 80px;
-      height: 80px;
-      font-size: 3rem;
+      width:110px; height:110px;
+      border-radius:50%;
+      background:var(--accent);
+      color:white;
+      font-size:4.2rem;
+      font-weight:bold;
+      display:flex; align-items:center; justify-content:center;
+      text-transform:uppercase;
     }
     #bottom-bar {
-      height: 80px;
-      background: rgba(13,14,17,0.9);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid #0a0b0e;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      z-index: 30;
+      height:80px;
+      background:rgba(13,14,17,0.94);
+      backdrop-filter:blur(12px);
+      border-top:1px solid #0a0b0e;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:28px;
+      z-index:30;
     }
     .control-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      width:58px; height:58px;
+      border-radius:50%;
+      border:none;
+      font-size:1.6rem;
+      cursor:pointer;
+      transition: all 0.22s;
+      box-shadow:0 3px 12px rgba(0,0,0,0.5);
     }
-    .control-btn:hover { transform: scale(1.15); }
-    .cam-on { background: var(--green); }
-    .mute-on { background: var(--red); }
-    .hangup { background: var(--red); }
-    #incoming, #tutorial-modal, #snake-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      display: none;
-      place-items: center;
-      z-index: 1000;
+    .control-btn:hover { transform:scale(1.14); }
+    .cam-on { background:var(--green); }
+    .mute-on { background:var(--red); }
+    .hangup { background:var(--red); }
+    #incoming, #tutorial-modal {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.92);
+      display:none;
+      place-items:center;
+      z-index:1000;
     }
     .modal-box {
-      background: #15181d;
-      padding: 40px;
-      border-radius: 16px;
-      text-align: center;
-      width: 380px;
-      max-width: 90%;
-      box-shadow: var(--shadow);
-    }
-    #game-area {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.95);
-      z-index: 50;
-    }
-    #game-info {
-      color: white;
-      font-size: 1.4rem;
-    }
-    canvas {
-      background: #111;
-      border: 4px solid var(--accent);
-      border-radius: 12px;
+      background:#15181d;
+      padding:36px;
+      border-radius:16px;
+      text-align:center;
+      width:420px;
+      max-width:92%;
+      box-shadow:var(--shadow);
     }
   </style>
 </head>
 <body>
-
 <div id="sidebar">
-  <h2 style="margin-bottom:20px;">Hangout BETA by ooze</h2>
-  <div style="margin-bottom:20px;">
-    <input type="text" id="username" placeholder="Your Name" style="width:100%; padding:12px; border-radius:8px; border:none; background:#1e2128; color:white;">
-    <button onclick="saveName()" style="margin-top:10px; width:100%; padding:12px; border-radius:8px; background:var(--accent); color:white; border:none;">Save</button>
+  <h2 style="margin-bottom:24px;">Hangout BETA</h2>
+  <div style="margin-bottom:24px;">
+    <input type="text" id="username" placeholder="Your Name" style="width:100%;padding:12px;border-radius:8px;border:none;background:#1e2128;color:white;">
+    <button onclick="saveName()" style="margin-top:10px;width:100%;padding:12px;border-radius:8px;background:var(--accent);color:white;border:none;">Save Name</button>
   </div>
   <div style="margin-bottom:20px;">
-    <input type="text" id="callTarget" placeholder="Friend's Peer ID" style="width:100%; padding:12px; border-radius:8px; border:none; background:#1e2128; color:white;">
-    <button onclick="startPrivateCall()" style="margin-top:10px; width:100%; padding:12px; border-radius:8px; background:var(--green); color:white; border:none;">Call</button>
+    <input type="text" id="callTarget" placeholder="Friend's Peer ID" style="width:100%;padding:12px;border-radius:8px;border:none;background:#1e2128;color:white;">
+    <button onclick="startCall()" style="margin-top:10px;width:100%;padding:12px;border-radius:8px;background:var(--green);color:white;border:none;">Call</button>
   </div>
-  <div style="margin:20px 0; font-size:0.95rem;">
+  <div style="margin:18px 0;font-size:0.95rem;">
     Your ID: <strong id="myId">---</strong>
   </div>
-  <button onclick="showTutorial()" style="width:100%; padding:12px; border-radius:8px; background:var(--accent); color:white; border:none;">Tutorial</button>
+  <div style="margin:25px 0;padding:14px;background:#1a1e25;border-radius:10px;">
+    <h3 style="margin-bottom:14px;">Groups</h3>
+    <div id="groupCreateSection">
+      <button onclick="createGroup()" style="width:100%;padding:10px;background:#f04747;color:white;border:none;border-radius:8px;">Create Group</button>
+    </div>
+    <div id="groupJoinSection" style="margin-top:10px;">
+      <input type="text" id="groupHostId" placeholder="Host's Peer ID" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none;background:#222;color:white;">
+      <input type="text" id="groupCodeInput" placeholder="Group Code" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none;background:#222;color:white;">
+      <button onclick="joinGroup()" style="width:100%;padding:10px;background:var(--green);color:white;border:none;border-radius:8px;">Join Group</button>
+    </div>
+    <div id="groupStatus" style="margin-top:14px;font-size:0.9rem;min-height:120px;word-break:break-all;"></div>
+  </div>
+  <button onclick="document.getElementById('tutorial-modal').style.display='flex'" style="width:100%;padding:12px;border-radius:8px;background:var(--accent);color:white;border:none;margin-top:12px;">Tutorial</button>
 </div>
 
 <div id="main">
   <div id="video-area">
-    <div id="remote-tile" class="video-tile">
-      <video id="remote-video" autoplay playsinline></video>
-      <div id="remote-avatar" class="avatar-placeholder">
-        <div class="avatar-circle" id="remote-letter">?</div>
-      </div>
-    </div>
-
-    <div id="local-tile" class="video-tile">
+    <div id="local-tile" class="video-tile self-video">
       <video id="local-video" autoplay playsinline muted></video>
       <div id="local-avatar" class="avatar-placeholder">
         <div class="avatar-circle" id="local-letter">?</div>
       </div>
     </div>
   </div>
-
   <div id="bottom-bar">
     <button id="muteBtn" class="control-btn" onclick="toggleMute()">🔇</button>
     <button id="camBtn" class="control-btn cam-on" onclick="toggleCamera()">📷</button>
-    <button id="snakeBtn" class="control-btn" onclick="requestSnakeGame()">🐍</button>
-    <button class="control-btn hangup" onclick="hangUp()">📞</button>
+    <button class="control-btn hangup" onclick="hangUpAll()">📞</button>
   </div>
 </div>
 
-<!-- Game Overlay -->
-<div id="game-area">
-  <div id="game-info">Level <span id="level">1</span> • Score: <span id="score">0</span></div>
-  <canvas id="snake-canvas" width="600" height="600"></canvas>
-  <button style="padding:12px 30px; background:var(--red); color:white; border:none; border-radius:8px; font-size:1.2rem;" onclick="endSnakeGame()">Exit Game</button>
-</div>
-
-<!-- Incoming Call -->
+<!-- Incoming Call Modal -->
 <div id="incoming">
   <div class="modal-box">
     <h2>Incoming Call</h2>
-    <p id="callerName" style="font-size:1.5rem; margin:25px 0;">...</p>
-    <div style="display:flex; gap:30px; justify-content:center;">
-      <button style="background:var(--green); color:white; padding:14px 50px; border:none; border-radius:10px;" onclick="acceptCall()">Accept</button>
-      <button style="background:var(--red); color:white; padding:14px 50px; border:none; border-radius:10px;" onclick="declineCall()">Decline</button>
+    <p id="callerName" style="font-size:1.7rem;margin:28px 0;">...</p>
+    <div style="display:flex;gap:50px;justify-content:center;">
+      <button style="background:var(--green);color:white;padding:16px 70px;border:none;border-radius:10px;font-size:1.25rem;" onclick="acceptCall()">Accept</button>
+      <button style="background:var(--red);color:white;padding:16px 70px;border:none;border-radius:10px;font-size:1.25rem;" onclick="declineCall()">Decline</button>
     </div>
   </div>
 </div>
 
-<!-- Tutorial -->
+<!-- Tutorial Modal -->
 <div id="tutorial-modal">
-  <div class="modal-box" style="width:520px; text-align:left;">
+  <div class="modal-box" style="width:580px;text-align:left;line-height:1.5;">
     <h2>Tutorial</h2>
-    <ul style="margin:25px 0; padding-left:24px;">
-      <li>Enter & save your name</li>
+    <ul style="margin:28px 0;padding-left:28px;">
+      <li>Save your display name</li>
       <li>Share your Peer ID</li>
-      <li>Call your friend</li>
-      <li>Both cameras on → side-by-side big videos</li>
-      <li>One camera → big main + small self-view</li>
-      <li>Click 🐍 to request multiplayer snake (with levels!)</li>
+      <li>Call your friend using their Peer ID</li>
+      <li>Create group → share your ID + code</li>
+      <li>Join by entering host ID + code</li>
     </ul>
-    <button style="background:var(--accent); color:white; padding:14px; border:none; border-radius:10px; width:100%;" onclick="hideTutorial()">Close</button>
+    <button style="background:var(--accent);color:white;padding:14px;border:none;border-radius:10px;width:100%;font-size:1.1rem;" onclick="document.getElementById('tutorial-modal').style.display='none'">Got it!</button>
   </div>
 </div>
-
-<!-- Snake Request -->
-<div id="snake-modal">
-  <div class="modal-box">
-    <h2>Snake Game</h2>
-    <p id="snakeRequester" style="font-size:1.4rem; margin:20px 0;">wants to play snake</p>
-    <div style="display:flex; gap:30px; justify-content:center;">
-      <button style="background:var(--green); color:white; padding:14px 40px; border:none; border-radius:10px;" onclick="acceptSnake()">Play</button>
-      <button style="background:var(--red); color:white; padding:14px 40px; border:none; border-radius:10px;" onclick="declineSnake()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<audio id="ringtone" loop preload="auto"></audio>
 
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script>
-// ── STATE ────────────────────────────────────────────────────────────────
-const STUN = [{ urls: 'stun:stun.l.google.com:19302' }];
-let peer, localStream = null, currentIncoming = null, dataConn = null, currentCall = null;
-let myName = localStorage.getItem('vcName') || 'Fortnite';
-let myId = localStorage.getItem('vcId');
-let remoteName = '';
+// ── State ────────────────────────────────────────────────────────────────
+let peer, localStream = null;
+let myName = localStorage.getItem('vcName') || 'Player';
+let dataConns = new Map();
+let remoteStreams = new Map();
+let remoteNames = new Map();
+let remoteCameras = new Map();
 let isCameraOn = true;
-let remoteCameraOn = false;
-let snakeGame = null;
-let currentSnakeRequest = null;
+let groupCode = null;
+let isGroupHost = false;
+let groupMembers = new Map(); // id → name
+let currentCall = null;
 
-document.getElementById('username').value = myName;
-const ringtone = document.getElementById('ringtone');
-ringtone.src = 'https://assets.codepen.io/438780/discord-incoming-call-short.mp3';
-
-const remoteVid = document.getElementById('remote-video');
-const localVid = document.getElementById('local-video');
-const localLetter = document.getElementById('local-letter');
-const remoteLetter = document.getElementById('remote-letter');
-
-// ── INIT PEER ────────────────────────────────────────────────────────────
+// ── PeerJS Setup ────────────────────────────────────────────────────────
 function initPeer() {
-  const opts = { config: { iceServers: STUN }, debug: 2 };
-  if (myId) opts.id = myId;
-  peer = new Peer(opts);
-
-  peer.on('open', id => {
-    if (!myId) {
-      myId = id;
-      localStorage.setItem('vcId', id);
-    }
-    document.getElementById('myId').textContent = id;
-    updateAvatars();
+  peer = new Peer({
+    config: { iceServers: [{urls: 'stun:stun.l.google.com:19302'}] },
+    debug: 2
   });
-
+  peer.on('open', id => {
+    document.getElementById('myId').textContent = id;
+    updateLocalAvatar();
+  });
   peer.on('call', call => {
-    currentIncoming = call;
     document.getElementById('callerName').textContent = call.metadata?.name || call.peer.slice(0,8);
     document.getElementById('incoming').style.display = 'flex';
-    ringtone.play().catch(()=>{});
+    currentCall = call;
   });
-
-  peer.on('connection', conn => {
-    dataConn = conn;
-    setupDataConn(conn);
-  });
+  peer.on('connection', conn => setupDataConnection(conn));
 }
 
-// ── DATA CONNECTION ──────────────────────────────────────────────────────
-function setupDataConn(conn) {
-  conn.on('data', data => {
-    if (data.type === 'name') {
-      remoteName = data.name;
-      updateAvatars();
-    } else if (data.type === 'camera') {
-      remoteCameraOn = data.on;
-      updateLayout();
-    } else if (data.type === 'snakeRequest') {
-      currentSnakeRequest = conn;
-      document.getElementById('snakeRequester').textContent = `${data.name} wants to play snake`;
-      document.getElementById('snake-modal').style.display = 'flex';
-    } else if (data.type === 'snakeAccept') {
-      startSnakeGame();
-    } else if (data.type === 'snakeDecline') {
-      alert(`${remoteName} declined the snake game.`);
-    } else if (data.type === 'snakeMove') {
-      if (snakeGame) snakeGame.opponentMove(data.dir);
-    }
-  });
+function setupDataConnection(conn) {
+  const pid = conn.peer;
+  dataConns.set(pid, conn);
+  conn.on('open', () => sendMyInfo(conn));
+  conn.on('data', data => handleIncomingData(pid, data));
+  conn.on('close', () => cleanupPeer(pid));
 }
 
-// ── LAYOUT & AVATARS ─────────────────────────────────────────────────────
-function updateAvatars() {
-  localLetter.textContent = myName.charAt(0).toUpperCase() || '?';
-  remoteLetter.textContent = remoteName.charAt(0).toUpperCase() || '?';
-  updateLayout();
+function sendMyInfo(conn) {
+  conn.send({type:'name', name:myName});
+  conn.send({type:'camera', on:isCameraOn});
 }
 
-function updateLayout() {
-  const videoArea = document.getElementById('video-area');
-  const bothOn = isCameraOn && remoteCameraOn;
-
-  if (bothOn) {
-    videoArea.classList.add('side-by-side');
-  } else {
-    videoArea.classList.remove('side-by-side');
+function handleIncomingData(from, data) {
+  if (data.type === 'name') {
+    remoteNames.set(from, data.name);
+    updateRemoteAvatar(from);
+    if (groupMembers.has(from)) groupMembers.set(from, data.name);
+    updateGroupDisplay();
   }
-
-  const localHasVideo = localStream && localStream.getVideoTracks().length > 0 && localStream.getVideoTracks()[0].enabled;
-  localVid.style.display = (isCameraOn && localHasVideo) ? 'block' : 'none';
-  document.getElementById('local-avatar').style.display = (isCameraOn && localHasVideo) ? 'none' : 'flex';
-
-  const remoteHasVideo = remoteVid.srcObject && remoteVid.srcObject.getVideoTracks().length > 0 && remoteVid.srcObject.getVideoTracks()[0].enabled;
-  remoteVid.style.display = (remoteCameraOn && remoteHasVideo) ? 'block' : 'none';
-  document.getElementById('remote-avatar').style.display = (remoteCameraOn && remoteHasVideo) ? 'none' : 'flex';
-}
-
-// ── CALLS ────────────────────────────────────────────────────────────────
-async function acceptCall() {
-  if (!currentIncoming) return;
-  try {
-    if (!localStream) {
-      localStream = await navigator.mediaDevices.getUserMedia({ 
-        audio: true, 
-        video: { 
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: "user"
-        } 
+  else if (data.type === 'camera') {
+    remoteCameras.set(from, data.on);
+    updateVideoTile(from);
+  }
+  // ── Group handlers ──────────────────────────────────────────────────────
+  else if (data.type === 'groupJoinRequest') {
+    if (isGroupHost && data.code === groupCode) {
+      groupMembers.set(from, remoteNames.get(from) || 'Unknown');
+      dataConns.get(from)?.send({
+        type: 'groupAccept',
+        members: Array.from(groupMembers.entries()).map(([id,name])=>({id,name}))
       });
+      broadcastToGroup({
+        type: 'groupUpdate',
+        members: Array.from(groupMembers.entries()).map(([id,name])=>({id,name}))
+      }, from);
+      updateGroupDisplay();
+    } else {
+      dataConns.get(from)?.send({type: 'groupReject'});
     }
-    currentIncoming.answer(localStream);
-    setupCall(currentIncoming);
-
-    const conn = peer.connect(currentIncoming.peer);
-    dataConn = conn;
-    setupDataConn(conn);
-    conn.on('open', () => sendMyInfo());
-  } catch (e) {
-    console.error("Camera access error:", e);
-    alert("Could not access camera. Check permissions.");
   }
-  document.getElementById('incoming').style.display = 'none';
-  ringtone.pause();
-  currentIncoming = null;
+  else if (data.type === 'groupAccept') {
+    data.members.forEach(m => groupMembers.set(m.id, m.name));
+    connectToGroupMembers(data.members.filter(m => m.id !== peer.id));
+    updateGroupDisplay();
+  }
+  else if (data.type === 'groupUpdate') {
+    data.members.forEach(m => groupMembers.set(m.id, m.name));
+    connectToGroupMembers(data.members.filter(m => m.id !== peer.id && !dataConns.has(m.id)));
+    updateGroupDisplay();
+  }
+  else if (data.type === 'groupReject') {
+    alert('Group join rejected: Invalid code or not host.');
+  }
+}
+
+function cleanupPeer(pid) {
+  dataConns.delete(pid);
+  removeRemoteVideo(pid);
+  if (groupMembers.has(pid)) {
+    groupMembers.delete(pid);
+    if (isGroupHost) broadcastToGroup({
+      type: 'groupUpdate',
+      members: Array.from(groupMembers.entries()).map(([id,name])=>({id,name}))
+    });
+  }
+  updateGroupDisplay();
+}
+
+// ── Media & Call Functions ──────────────────────────────────────────────
+async function startLocalMedia() {
+  localStream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user", width: {ideal:1280}, height: {ideal:720} },
+    audio: true
+  });
+  localVid.srcObject = localStream;
+  updateVideoTile();
+}
+
+async function startCall() {
+  const target = document.getElementById('callTarget').value.trim();
+  if (!target) return;
+  if (!localStream) await startLocalMedia().catch(() => {});
+  const call = peer.call(target, localStream, {metadata:{name:myName}});
+  currentCall = call;
+  setupCall(call);
+  const conn = peer.connect(target);
+  setupDataConnection(conn);
 }
 
 function setupCall(call) {
-  currentCall = call;
-  call.on('stream', stream => {
-    remoteVid.srcObject = stream;
-    remoteCameraOn = stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled;
-    updateLayout();
-  });
-  call.on('close', () => hangUp());
+  call.on('stream', stream => addRemoteVideo(call.peer, stream));
+  call.on('close', () => cleanupPeer(call.peer));
 }
 
-async function startPrivateCall() {
-  const target = document.getElementById('callTarget').value.trim();
-  if (!target) return alert('Enter Peer ID');
-
-  try {
-    localStream = await navigator.mediaDevices.getUserMedia({ 
-      audio: true, 
-      video: { 
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        facingMode: "user"
-      } 
-    });
-    updateLayout();
-
-    const call = peer.call(target, localStream, { metadata: { name: myName } });
-    setupCall(call);
-
-    const conn = peer.connect(target);
-    dataConn = conn;
-    setupDataConn(conn);
-    conn.on('open', () => sendMyInfo());
-  } catch (e) {
-    console.error("Call failed / camera error:", e);
-    alert("Could not start call - camera access denied or failed.");
-  }
+async function acceptCall() {
+  if (!currentCall) return;
+  if (!localStream) await startLocalMedia();
+  currentCall.answer(localStream);
+  setupCall(currentCall);
+  const conn = peer.connect(currentCall.peer);
+  setupDataConnection(conn);
+  document.getElementById('incoming').style.display = 'none';
+  currentCall = null;
 }
 
-function sendMyInfo() {
-  if (dataConn) {
-    dataConn.send({ type: 'name', name: myName });
-    dataConn.send({ type: 'camera', on: isCameraOn });
-  }
+function declineCall() {
+  currentCall?.close();
+  document.getElementById('incoming').style.display = 'none';
+  currentCall = null;
 }
 
-async function toggleCamera() {
-  isCameraOn = !isCameraOn;
-  
-  if (isCameraOn) {
-    try {
-      // Try to get camera again if we don't have it
-      if (!localStream || localStream.getVideoTracks().length === 0) {
-        const camStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            facingMode: "user"
-          } 
-        });
-        if (localStream) {
-          localStream.addTrack(camStream.getVideoTracks()[0]);
-        } else {
-          localStream = camStream;
-        }
-      } else {
-        localStream.getVideoTracks().forEach(t => t.enabled = true);
-      }
-    } catch (e) {
-      console.error("Camera re-enable failed:", e);
-      alert("Couldn't turn camera back on - check permissions");
-      isCameraOn = false; // revert if failed
+// ── Video Management ────────────────────────────────────────────────────
+function addRemoteVideo(peerId, stream) {
+  if (remoteStreams.has(peerId)) return;
+  const tile = document.createElement('div');
+  tile.className = 'video-tile main-video';
+  tile.id = `tile-${peerId}`;
+  const vid = document.createElement('video');
+  vid.autoplay = vid.playsinline = true;
+  vid.srcObject = stream;
+  tile.appendChild(vid);
+  const av = document.createElement('div');
+  av.className = 'avatar-placeholder';
+  av.id = `av-${peerId}`;
+  av.innerHTML = `<div class="avatar-circle">${(remoteNames.get(peerId)?.[0]||'?').toUpperCase()}</div>`;
+  tile.appendChild(av);
+  videoArea.insertBefore(tile, document.getElementById('local-tile'));
+  remoteStreams.set(peerId, stream);
+  remoteCameras.set(peerId, true);
+  updateLayout();
+}
+
+function removeRemoteVideo(pid) {
+  document.getElementById(`tile-${pid}`)?.remove();
+  remoteStreams.delete(pid);
+  remoteCameras.delete(pid);
+  remoteNames.delete(pid);
+  updateLayout();
+}
+
+function updateVideoTile(pid = null) {
+  if (pid) {
+    const vid = document.querySelector(`#tile-${pid} video`);
+    const av = document.getElementById(`av-${pid}`);
+    if (vid && av) {
+      const on = remoteCameras.get(pid);
+      vid.style.display = on ? 'block' : 'none';
+      av.style.display = on ? 'none' : 'flex';
     }
   } else {
-    // Just disable tracks instead of stopping them (so we can re-enable)
-    if (localStream) {
-      localStream.getVideoTracks().forEach(t => t.enabled = false);
-    }
+    const hasVid = localStream?.getVideoTracks()[0]?.enabled ?? false;
+    localVid.style.display = isCameraOn && hasVid ? 'block' : 'none';
+    document.getElementById('local-avatar').style.display = isCameraOn && hasVid ? 'none' : 'flex';
   }
+}
 
-  updateLayout();
-  if (dataConn) dataConn.send({ type: 'camera', on: isCameraOn });
+function updateLayout() {
+  const count = remoteStreams.size;
+  videoArea.classList.toggle('side-by-side', count === 1);
+}
+
+function updateLocalAvatar() {
+  localLetter.textContent = myName.charAt(0).toUpperCase() || '?';
+}
+
+function updateRemoteAvatar(pid) {
+  const circle = document.querySelector(`#av-${pid} .avatar-circle`);
+  if (circle) circle.textContent = (remoteNames.get(pid)?.charAt(0) || '?').toUpperCase();
+}
+
+// ── Controls ────────────────────────────────────────────────────────────
+async function toggleCamera() {
+  if (!localStream) return;
+  isCameraOn = !isCameraOn;
+  localStream.getVideoTracks()[0].enabled = isCameraOn;
+  updateVideoTile();
+  dataConns.forEach(c => c.send({type:'camera', on:isCameraOn}));
   document.getElementById('camBtn').classList.toggle('cam-on', isCameraOn);
 }
 
 function toggleMute() {
-  if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !t.enabled);
+  if (localStream) localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
   document.getElementById('muteBtn').classList.toggle('mute-on');
 }
 
-function hangUp() {
-  currentCall?.close();
-  dataConn?.close();
-  localStream?.getTracks().forEach(t => t.stop());
-  localStream = null;
-  remoteVid.srcObject = null;
-  remoteName = '';
-  remoteCameraOn = false;
-  endSnakeGame();
-  updateLayout();
+function hangUpAll() {
+  dataConns.forEach(c => c.close());
+  remoteStreams.forEach((_,p) => removeRemoteVideo(p));
+  dataConns.clear();
+  groupMembers.clear();
+  groupCode = null;
+  isGroupHost = false;
+  updateGroupDisplay();
+  if (localStream) {
+    localStream.getTracks().forEach(t=>t.stop());
+    localStream = null;
+  }
+  localVid.srcObject = null;
+}
+
+// ── Groups ──────────────────────────────────────────────────────────────
+function createGroup() {
+  if (groupCode) return;
+  groupCode = Math.random().toString(36).slice(2,8).toUpperCase();
+  isGroupHost = true;
+  groupMembers.set(peer.id, myName);
+  updateGroupDisplay();
+}
+
+function joinGroup() {
+  const hostId = document.getElementById('groupHostId').value.trim();
+  const code = document.getElementById('groupCodeInput').value.trim().toUpperCase();
+  if (!hostId || !code) return;
+  startCallToHost(hostId, code);
+}
+
+async function startCallToHost(target, code) {
+  if (!localStream) await startLocalMedia();
+  const call = peer.call(target, localStream, {metadata:{name:myName}});
+  setupCall(call);
+  const conn = peer.connect(target);
+  conn.on('open', () => {
+    sendMyInfo(conn);
+    conn.send({type: 'groupJoinRequest', code});
+  });
+  setupDataConnection(conn);
+}
+
+function connectToGroupMembers(members) {
+  members.forEach(m => {
+    if (dataConns.has(m.id) || m.id === peer.id) return;
+    const call = peer.call(m.id, localStream, {metadata:{name:myName}});
+    setupCall(call);
+    const conn = peer.connect(m.id);
+    setupDataConnection(conn);
+  });
+}
+
+function broadcastToGroup(msg, exclude = null) {
+  dataConns.forEach((conn, pid) => {
+    if (pid !== exclude) conn.send(msg);
+  });
+}
+
+function updateGroupDisplay() {
+  const el = document.getElementById('groupStatus');
+  if (!groupCode) {
+    el.innerHTML = '';
+    return;
+  }
+  let txt = `Group: <strong>${groupCode}</strong>${isGroupHost ? ' (host)' : ''}<br>Members:<br>`;
+  groupMembers.forEach((name, id) => {
+    txt += `• ${name} (${id.slice(0,8)}${id===peer.id?' - you':''})<br>`;
+  });
+  el.innerHTML = txt;
 }
 
 function saveName() {
-  myName = document.getElementById('username').value.trim() || 'Fortnite';
+  myName = document.getElementById('username').value.trim() || 'Player';
   localStorage.setItem('vcName', myName);
-  updateAvatars();
-  if (dataConn) dataConn.send({ type: 'name', name: myName });
+  updateLocalAvatar();
+  dataConns.forEach(c => c.send({type:'name', name:myName}));
 }
 
-// ── SNAKE GAME (unchanged from previous working version) ─────────────────
-function requestSnakeGame() {
-  if (!dataConn) return alert('Not in a call');
-  dataConn.send({ type: 'snakeRequest', name: myName });
-}
+// Start
+const localVid = document.getElementById('local-video');
+const videoArea = document.getElementById('video-area');
+const localLetter = document.getElementById('local-letter');
 
-function acceptSnake() {
-  document.getElementById('snake-modal').style.display = 'none';
-  if (currentSnakeRequest) {
-    currentSnakeRequest.send({ type: 'snakeAccept' });
-    startSnakeGame();
-  }
-}
-
-function declineSnake() {
-  document.getElementById('snake-modal').style.display = 'none';
-  if (currentSnakeRequest) currentSnakeRequest.send({ type: 'snakeDecline' });
-}
-
-function startSnakeGame() {
-  document.getElementById('game-area').style.display = 'flex';
-  snakeGame = new MultiplayerSnake();
-}
-
-function endSnakeGame() {
-  document.getElementById('game-area').style.display = 'none';
-  if (snakeGame) clearInterval(snakeGame.loop);
-  snakeGame = null;
-}
-
-class MultiplayerSnake {
-  constructor() {
-    this.canvas = document.getElementById('snake-canvas');
-    this.ctx = this.canvas.getContext('2d');
-    this.grid = 20;
-    this.size = this.canvas.width / this.grid;
-
-    this.level = 1;
-    this.score = 0;
-    this.speed = 150;
-
-    this.player = [{x: 5, y: 10}];
-    this.opponent = [{x: 25, y: 10}];
-    this.playerDir = 'right';
-    this.opponentDir = 'left';
-    this.food = this.randomFood();
-
-    document.getElementById('level').textContent = this.level;
-    document.getElementById('score').textContent = this.score;
-
-    this.setupControls();
-    this.loop = setInterval(() => this.update(), this.speed);
-  }
-
-  setupControls() {
-    document.onkeydown = e => {
-      let dir;
-      if (e.key === 'w' && this.playerDir !== 'down') dir = 'up';
-      if (e.key === 's' && this.playerDir !== 'up') dir = 'down';
-      if (e.key === 'a' && this.playerDir !== 'right') dir = 'left';
-      if (e.key === 'd' && this.playerDir !== 'left') dir = 'right';
-      if (dir) {
-        this.playerDir = dir;
-        if (dataConn) dataConn.send({ type: 'snakeMove', dir });
-      }
-    };
-  }
-
-  opponentMove(dir) {
-    this.opponentDir = dir;
-  }
-
-  update() {
-    this.move(this.player, this.playerDir);
-    this.move(this.opponent, this.opponentDir);
-
-    if (this.eat(this.player)) this.score += 10;
-    if (this.eat(this.opponent)) this.score += 5;
-
-    if (this.score > 0 && this.score % 50 === 0) this.levelUp();
-
-    this.checkCollision();
-    this.draw();
-  }
-
-  move(snake, dir) {
-    const head = {x: snake[0].x, y: snake[0].y};
-    if (dir === 'up') head.y--;
-    if (dir === 'down') head.y++;
-    if (dir === 'left') head.x--;
-    if (dir === 'right') head.x++;
-    snake.unshift(head);
-    snake.pop();
-  }
-
-  eat(snake) {
-    const head = snake[0];
-    if (head.x === this.food.x && head.y === this.food.y) {
-      snake.push({...snake[snake.length-1]});
-      this.food = this.randomFood();
-      document.getElementById('score').textContent = this.score += 10;
-      return true;
-    }
-    return false;
-  }
-
-  levelUp() {
-    this.level++;
-    this.speed = Math.max(50, this.speed - 20);
-    clearInterval(this.loop);
-    this.loop = setInterval(() => this.update(), this.speed);
-    document.getElementById('level').textContent = this.level;
-  }
-
-  checkCollision() {
-    const p = this.player[0];
-    const o = this.opponent[0];
-    if (p.x < 0 || p.x >= this.size || p.y < 0 || p.y >= this.size ||
-        o.x < 0 || o.x >= this.size || o.y < 0 || o.y >= this.size) {
-      alert('Game Over! Final Score: ' + this.score);
-      endSnakeGame();
-    }
-  }
-
-  draw() {
-    this.ctx.fillStyle = '#111';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.ctx.fillStyle = '#3ba55c';
-    this.player.forEach(s => this.ctx.fillRect(s.x * this.grid, s.y * this.grid, this.grid-2, this.grid-2));
-
-    this.ctx.fillStyle = '#5865f2';
-    this.opponent.forEach(s => this.ctx.fillRect(s.x * this.grid, s.y * this.grid, this.grid-2, this.grid-2));
-
-    this.ctx.fillStyle = '#ed4245';
-    this.ctx.fillRect(this.food.x * this.grid, this.food.y * this.grid, this.grid-2, this.grid-2);
-  }
-
-  randomFood() {
-    return {
-      x: Math.floor(Math.random() * this.size),
-      y: Math.floor(Math.random() * this.size)
-    };
-  }
-}
-
-// ── MODALS ───────────────────────────────────────────────────────────────
-function showTutorial() { document.getElementById('tutorial-modal').style.display = 'flex'; }
-function hideTutorial() { document.getElementById('tutorial-modal').style.display = 'none'; }
-
-// Init
 initPeer();
-updateAvatars();
+updateLocalAvatar();
 </script>
 </body>
 </html>
