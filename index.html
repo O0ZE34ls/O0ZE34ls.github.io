@@ -135,21 +135,23 @@
   <div style="margin:18px 0;font-size:0.95rem;">
     Your ID: <strong id="myId">---</strong>
   </div>
+
   <!-- Share ID Button -->
-<div style="margin: 24px 0;">
-  <a href="https://padlet.com/O0ZE34/id-sharing-jfwe0dpoc856zkr6"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:block; width:100%; padding:14px; 
-            background:#5865f2; color:white; 
-            border:none; border-radius:10px; 
-            font-size:1.1rem; font-weight:600; 
-            text-align:center; text-decoration:none;
-            box-shadow:0 3px 12px rgba(88,101,242,0.35);
-            transition:all 0.22s;">
-    Share your ID with friends! 🚀
-  </a>
-</div>
+  <div style="margin: 24px 0;">
+    <a href="https://padlet.com/O0ZE34/id-sharing-jfwe0dpoc856zkr6"
+       target="_blank"
+       rel="noopener noreferrer"
+       style="display:block; width:100%; padding:14px;
+              background:#5865f2; color:white;
+              border:none; border-radius:10px;
+              font-size:1.1rem; font-weight:600;
+              text-align:center; text-decoration:none;
+              box-shadow:0 3px 12px rgba(88,101,242,0.35);
+              transition:all 0.22s;">
+      Share your ID with friends! 🚀
+    </a>
+  </div>
+
   <div style="margin:25px 0;padding:14px;background:#1a1e25;border-radius:10px;">
     <h3 style="margin-bottom:14px;">Groups</h3>
     <div id="groupCreateSection">
@@ -162,7 +164,35 @@
     </div>
     <div id="groupStatus" style="margin-top:14px;font-size:0.9rem;min-height:120px;word-break:break-all;"></div>
   </div>
-  <button onclick="document.getElementById('tutorial-modal').style.display='flex'" style="width:100%;padding:12px;border-radius:8px;background:var(--accent);color:white;border:none;margin-top:12px;">Tutorial</button>
+
+  <button onclick="document.getElementById('tutorial-modal').style.display='flex'" 
+          style="width:100%;padding:12px;border-radius:8px;background:var(--accent);color:white;border:none;margin-top:12px;">
+    Tutorial
+  </button>
+
+  <!-- VERSION 2 BUTTON -->
+  <button 
+    onclick="window.open('https://oozehangoutsystempart22.global.ssl.fastly.net', '_blank')"
+    style="
+      width:100%;
+      padding:14px;
+      margin-top:16px;
+      border-radius:10px;
+      background: linear-gradient(135deg, #7289da, #5865f2);
+      color:white;
+      border:none;
+      font-size:1.05rem;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(88,101,242,0.4);
+      transition: all 0.25s;
+    "
+    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(88,101,242,0.55)'"
+    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(88,101,242,0.4)'"
+  >
+    Version 2 → Try it now!
+  </button>
+
 </div>
 
 <div id="main">
@@ -510,10 +540,8 @@ function saveName() {
 const localVid = document.getElementById('local-video');
 const videoArea = document.getElementById('video-area');
 const localLetter = document.getElementById('local-letter');
-
 initPeer();
 updateLocalAvatar();
 </script>
 </body>
 </html>
-
